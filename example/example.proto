@@ -1,0 +1,42 @@
+
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "cgentron/amazon/annotations.proto";
+
+// Example ...
+service Example {
+  // Insert ...
+  rpc Insert(Insert.Request) returns (Insert.Response) {
+    option (cgentron.amazon.methods).lambda = {
+      function_name: "arn:aws:lambda:eu-west-1:291339088935:function:my-test",
+      qualifier: "$LATEST"
+    };
+  };
+}
+
+// Song ...
+message Song {
+ // Artist ...
+  string artist       = 1;
+  // SongTitle ...
+  string song_title   = 2;
+  // AlbumTitle ...
+  string album_title  = 3;
+  // Year ...
+  string year         = 4;
+}
+
+// Insert ...
+message Insert {
+  // Request ...
+  message Request {
+    Song Song = 1;
+  }
+  // Response ...
+  message Response {
+    string uuid = 1;
+  }
+}
