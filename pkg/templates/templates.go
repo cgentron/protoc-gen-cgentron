@@ -13,10 +13,7 @@ func makeTemplate(ext string, fn RegisterFn, params pgs.Parameters) *template.Te
 	tpl := template.New(ext)
 	shared.Register(tpl, params)
 
-	// template.Must(tpl.New("lambda").Parse(lambdaTpl))
-	// template.Must(tpl.New("dynamodb").Parse(dynamoDBTpl))
-	// template.Must(tpl.New("sqs_client_streaming").Parse(sqsClientStreamingTpl))
-	// template.Must(tpl.New("sqs_server_streaming").Parse(sqsServerStreamingTpl))
+	template.Must(tpl.New("resolver").Parse(resolverTpl))
 
 	fn(tpl, params)
 	return tpl

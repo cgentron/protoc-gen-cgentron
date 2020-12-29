@@ -5,16 +5,12 @@ package proto;
 
 import "google/protobuf/timestamp.proto";
 import "cgentron/amazon/annotations.proto";
+import "cgentron/api/annotations.proto";
 
 // Example ...
 service Example {
   // Insert ...
-  rpc Insert(Insert.Request) returns (Insert.Response) {
-    option (cgentron.amazon.methods).lambda = {
-      function_name: "arn:aws:lambda:eu-west-1:291339088935:function:my-test",
-      qualifier: "$LATEST"
-    };
-  };
+  rpc Insert(Insert.Request) returns (Insert.Response) {};
 }
 
 // Song ...
@@ -33,6 +29,16 @@ message Song {
 message Insert {
   // Request ...
   message Request {
+    option (cgentron.api.messages).resolver = {
+      name: "github.com/cgentron/pluginamazn",
+      url: "https://github.com/cgentron/pluginamzn/archive/c567b5f7f347b4b6153fcc19700a59611b9bd4c9.zip"
+    };
+
+    option (cgentron.amazon.messages).lambda = {
+      function_name: "arn:aws:lambda:eu-west-1:291339088935:function:my-test",
+      qualifier: "$LATEST"
+    };
+
     Song Song = 1;
   }
   // Response ...

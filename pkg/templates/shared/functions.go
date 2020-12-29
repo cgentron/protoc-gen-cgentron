@@ -46,5 +46,10 @@ func proxyContext(m pgs.Method) (ProxyContext, error) {
 }
 
 func resolveMethods(a *pb.Methods, m pgs.Method) string {
+	println(a.GetResolver())
+	if a.GetResolver() != nil {
+		return "resolver"
+	}
+
 	return "error"
 }
