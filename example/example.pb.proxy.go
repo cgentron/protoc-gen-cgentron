@@ -41,8 +41,9 @@ type srv struct {
 }
 
 type service struct {
-	tlsCfg *tls.Config
-	logger *zap.Logger
+	tlsCfg  *tls.Config
+	logger  *zap.Logger
+	builder *resolvers.Builder
 	UnimplementedExampleServer
 }
 
@@ -77,13 +78,20 @@ func (s *srv) Start(ctx context.Context, ready server.ReadyFunc) func() error {
 			return err
 		}
 
-		if err := s.loadPlugins(c); err != nil {
+		rr, err := s.fetchResolvers(ctx, c)
+		if err != nil {
+			return err
+		}
+
+		b, err := resolvers.NewBuilder(c, rr)
+		if err != nil {
 			return err
 		}
 
 		ll := s.opts.Logger.With(zap.String("addr", s.opts.Addr))
 		srv := &service{
-			logger: s.opts.Logger,
+			logger:  s.opts.Logger,
+			builder: b,
 		}
 
 		tlsConfig := &tls.Config{}
@@ -126,8 +134,23 @@ func (s *srv) Start(ctx context.Context, ready server.ReadyFunc) func() error {
 	}
 }
 
-func (s *srv) loadPlugins(c *resolvers.Client) error {
-	return nil
+func (s *srv) fetchResolvers(ctx context.Context, c *resolvers.Client) (map[string]resolvers.Descriptor, error) {
+	rr := map[string]resolvers.Descriptor{}
+
+	for _, p := range s.resolvers { // todo: could be errgroup
+		_, err := c.Fetch(ctx, p.Name, p.Version, p.Url)
+		if err != nil {
+			return rr, err
+		}
+
+		if err := c.Unzip(p.Name, p.Version); err != nil {
+			return rr, err
+		}
+
+		rr[p.Name] = resolvers.Descriptor{ModuleName: p.Name, Version: p.Version}
+	}
+
+	return rr, nil
 }
 
 // SongJSONMarshaler describes the default jsonpb.Marshaler used by all

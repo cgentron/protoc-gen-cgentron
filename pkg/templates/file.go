@@ -15,7 +15,9 @@ import (
 
   "github.com/andersnormal/pkg/server"
 	o "github.com/cgentron/protoc-gen-cgentron/pkg/opts"
-	"github.com/cgentron/protoc-gen-cgentron/pkg/proxy"
+  "github.com/cgentron/protoc-gen-cgentron/pkg/proxy"
+  "github.com/cgentron/protoc-gen-cgentron/pkg/resolvers"
+  pb "github.com/cgentron/api/proto"
 
 	"github.com/golang/protobuf/jsonpb"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -26,33 +28,41 @@ import (
 	grpc_health_v1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
 )
-
-var resolver_rules_rawDesc = map[string]*pb.ResolverRule{}
+var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
+	"": {},
+}
 
 var (
-	resolver_rules proxy.ResolverRules = resolver_rules_rawDesc
+	resolver_rules o.ResolverRules = resolver_rules_rawDesc
 )
 
 type srv struct {
-	opts *o.Opts
+	opts      *o.Opts
+	resolvers o.ResolverRules
 }
 
 type service struct {
-  tlsCfg *tls.Config
-  logger *zap.Logger
+	tlsCfg  *tls.Config
+	logger  *zap.Logger
+	builder *resolvers.Builder
 	UnimplementedExampleServer
 }
 
 func New(opts *o.Opts) proxy.Listener {
-  s := new(srv)
-  s.opts = opts
+	s := new(srv)
+	s.opts = opts
 
-  return s
+	s.resolvers = resolver_rules
+	for k, r := range s.opts.Resolvers {
+		s.resolvers[k] = r
+	}
+
+	return s
 }
 
 func NewProxy(opts *o.Opts) proxy.Proxy {
-  s := New(opts)
-  p := proxy.New(s, opts)
+	s := New(opts)
+	p := proxy.New(s, opts)
 
 	return p
 }
@@ -64,10 +74,26 @@ func (s *srv) Start(ctx context.Context, ready server.ReadyFunc) func() error {
 			return err
 		}
 
+		c, err := resolvers.NewClient()
+		if err != nil {
+			return err
+		}
+
+		rr, err := s.fetchResolvers(ctx, c)
+		if err != nil {
+			return err
+		}
+
+		b, err := resolvers.NewBuilder(c, rr)
+		if err != nil {
+			return err
+		}
+
 		ll := s.opts.Logger.With(zap.String("addr", s.opts.Addr))
 		srv := &service{
-      logger: s.opts.Logger,
-    }
+			logger:  s.opts.Logger,
+			builder: b,
+		}
 
 		tlsConfig := &tls.Config{}
 		tlsConfig.InsecureSkipVerify = true
@@ -108,4 +134,22 @@ func (s *srv) Start(ctx context.Context, ready server.ReadyFunc) func() error {
 		return nil
 	}
 }
-`
+
+func (s *srv) fetchResolvers(ctx context.Context, c *resolvers.Client) (map[string]resolvers.Descriptor, error) {
+	rr := map[string]resolvers.Descriptor{}
+
+	for _, p := range s.resolvers { // todo: could be errgroup
+		_, err := c.Fetch(ctx, p.Name, p.Version, p.Url)
+		if err != nil {
+			return rr, err
+		}
+
+		if err := c.Unzip(p.Name, p.Version); err != nil {
+			return rr, err
+		}
+
+		rr[p.Name] = resolvers.Descriptor{ModuleName: p.Name, Version: p.Version}
+	}
+
+	return rr, nil
+}`
