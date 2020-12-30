@@ -1,3 +1,6 @@
 package templates
 
-const resolverTpl = ``
+const resolverTpl = `
+  // {{ .Typ }}
+  return nil, nil
+`

@@ -287,5 +287,8 @@ var _ json.Unmarshaler = (*Insert_Response)(nil)
 
 // Here goes a message Insert
 func (s *service) Insert(ctx context.Context, req *Insert_Request) (*Insert_Response, error) {
+
+	// resolver
 	return nil, nil
+
 }

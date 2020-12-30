@@ -30,13 +30,18 @@ func proxyContext(m pgs.Method) (ProxyContext, error) {
 	ctx := ProxyContext{}
 	ctx.Method = m
 
-	var services pb.Methods
-	if _, err := m.Extension(pb.E_Methods, &services); err != nil {
+	in := m.Input()
+	var options pb.Messages
+	if _, err := in.Extension(pb.E_Messages, &options); err != nil {
 		return ctx, err
 	}
 
-	ctx.Typ = resolveMethods(&services, m)
-	ctx.Methods = &services
+	if options.GetResolver() != nil {
+		ctx.Typ = "resolver"
+	}
+
+	// ctx.Typ = resolveMethods(&services, m)
+	// ctx.Methods = &services
 
 	if ctx.Typ == "error" {
 		return ctx, fmt.Errorf("unknown template type")
@@ -46,10 +51,10 @@ func proxyContext(m pgs.Method) (ProxyContext, error) {
 }
 
 func resolveMethods(a *pb.Methods, m pgs.Method) string {
-	println(a.GetResolver())
-	if a.GetResolver() != nil {
-		return "resolver"
-	}
+	// println(a.GetResolver())
+	// if a.GetResolver() != nil {
+	// 	return "resolver"
+	// }
 
 	return "error"
 }
