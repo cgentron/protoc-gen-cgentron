@@ -1,9 +1,13 @@
 package opts
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
 	"go.uber.org/zap"
+
+	pb "github.com/cgentron/api/proto"
 )
+
+// ResolverRules ...
+type ResolverRules map[string]*pb.ResolverRule
 
 const (
 	// DefaultAddr ...
@@ -36,8 +40,8 @@ type Opts struct {
 	LogLevel string
 	// Logger ...
 	Logger *zap.Logger
-	// Session ...
-	Session *session.Session
+	// Resolvers ...
+	Resolvers ResolverRules
 }
 
 // Opt ...
@@ -52,6 +56,7 @@ func NewDefaultOpts() *Opts {
 		LogLevel:   DefaultLogLevel,
 		Debug:      DefaultDebug,
 		Verbose:    DefaultVerbose,
+		Resolvers:  make(ResolverRules),
 	}
 }
 
@@ -112,9 +117,11 @@ func WithStatusAddr(addr string) Opt {
 	}
 }
 
-// WithSession ...
-func WithSession(session *session.Session) Opt {
+// WithResolvers ...
+func WithResolvers(resolvers ResolverRules) Opt {
 	return func(opts *Opts) {
-		opts.Session = session
+		for k, r := range resolvers {
+			opts.Resolvers[k] = r
+		}
 	}
 }

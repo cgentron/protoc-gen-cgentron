@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 
+	pb "github.com/cgentron/api/proto"
 	"github.com/cgentron/protoc-gen-cgentron/pkg/templates"
 
 	pgs "github.com/lyft/protoc-gen-star"
@@ -50,19 +51,23 @@ func (m *Module) genProxy(f pgs.File, buf *bytes.Buffer, params pgs.Parameters) 
 	)
 }
 
+type Resolvers map[string]*pb.ResolverRule
+
 type ProxyVisitor struct {
 	pgs.Visitor
 	pgs.DebuggerCommon
 	pgs.Parameters
+	Resolvers
 	prefix string
 	w      io.Writer
 }
 
-func initProxyVisitor(d pgs.DebuggerCommon, w io.Writer, prefix string, params pgs.Parameters) pgs.Visitor {
+func initProxyVisitor(d pgs.DebuggerCommon, w io.Writer, prefix string, params pgs.Parameters) ProxyVisitor {
 	p := ProxyVisitor{
 		prefix:         prefix,
 		w:              w,
 		Parameters:     params,
+		Resolvers:      make(Resolvers),
 		DebuggerCommon: d,
 	}
 
@@ -158,6 +163,10 @@ func (p ProxyVisitor) visitMethod(m pgs.Method) (pgs.Visitor, error) {
 
 // VisitMessage ...
 func (p ProxyVisitor) VisitMessage(m pgs.Message) (pgs.Visitor, error) {
+	if err := p.findResolver(m); err != nil {
+		return nil, err
+	}
+
 	tpl, err := templates.Message(p.Parameters)
 	if err != nil {
 		return nil, err
@@ -169,6 +178,20 @@ func (p ProxyVisitor) VisitMessage(m pgs.Message) (pgs.Visitor, error) {
 	}
 
 	return p, err
+}
+
+func (p ProxyVisitor) findResolver(m pgs.Message) error {
+	var ext pb.Messages
+	if _, err := m.Extension(pb.E_Messages, &ext); err != nil {
+		return err
+	}
+
+	if resolver := ext.GetResolver(); resolver != nil {
+		p.Debugf("found resolver: %s", resolver.Name)
+		p.Resolvers[resolver.Name] = resolver
+	}
+
+	return nil
 }
 
 var _ pgs.Module = (*Module)(nil)

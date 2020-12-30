@@ -3,6 +3,7 @@ package proxy
 import (
 	"context"
 
+	"github.com/andersnormal/pkg/debug"
 	"github.com/andersnormal/pkg/server"
 	"github.com/spf13/cobra"
 
@@ -44,11 +45,12 @@ func (p *proxy) Start(ctx context.Context) error {
 
 	if p.opts.Debug {
 		// debug listener
-		debug := server.NewDebugListener(
-			server.WithPprof(),
-			server.WithStatusAddr(p.opts.StatusAddr),
+		d := debug.New(
+			debug.WithPprof(),
+			debug.WithStatusAddr(p.opts.StatusAddr),
 		)
-		s.Listen(debug, true)
+
+		s.Listen(d, true)
 	}
 
 	// listen for grpc
