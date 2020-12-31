@@ -10,8 +10,9 @@ import (
 )
 
 type ProxyContext struct {
-	Methods *pb.Methods
-	Method  pgs.Method
+	Messages *pb.Messages
+	Methods  *pb.Methods
+	Method   pgs.Method
 
 	Typ string
 }

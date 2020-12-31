@@ -27,14 +27,6 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
-	"": {},
-}
-
-var (
-	resolver_rules o.ResolverRules = resolver_rules_rawDesc
-)
-
 type srv struct {
 	opts      *o.Opts
 	resolvers o.ResolverRules
@@ -292,3 +284,16 @@ func (s *service) Insert(ctx context.Context, req *Insert_Request) (*Insert_Resp
 	return nil, nil
 
 }
+
+var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
+
+	"github.com/cgentron/pluginamazn": &pb.ResolverRule{
+		Name:    "github.com/cgentron/pluginamazn",
+		Url:     "https://github.com/cgentron/pluginamzn/archive/c567b5f7f347b4b6153fcc19700a59611b9bd4c9.zip",
+		Version: "",
+	},
+}
+
+var (
+	resolver_rules o.ResolverRules = resolver_rules_rawDesc
+)

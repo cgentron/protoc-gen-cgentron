@@ -28,13 +28,6 @@ import (
 	grpc_health_v1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
 )
-var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
-	"": {},
-}
-
-var (
-	resolver_rules o.ResolverRules = resolver_rules_rawDesc
-)
 
 type srv struct {
 	opts      *o.Opts

@@ -42,6 +42,7 @@ func (m *Module) genProxy(f pgs.File, buf *bytes.Buffer, params pgs.Parameters) 
 	buf.Reset()
 	v := initProxyVisitor(m, buf, "", params)
 	m.CheckErr(pgs.Walk(v, f), "unable to generate AST tree")
+	m.CheckErr(postProcessProxyVisitor(v, params), "unable to generate plugins")
 
 	out := buf.String()
 
@@ -51,15 +52,13 @@ func (m *Module) genProxy(f pgs.File, buf *bytes.Buffer, params pgs.Parameters) 
 	)
 }
 
-type Resolvers map[string]*pb.ResolverRule
-
 type ProxyVisitor struct {
 	pgs.Visitor
 	pgs.DebuggerCommon
 	pgs.Parameters
-	Resolvers
-	prefix string
-	w      io.Writer
+	Resolvers templates.RegisteredResolvers
+	prefix    string
+	w         io.Writer
 }
 
 func initProxyVisitor(d pgs.DebuggerCommon, w io.Writer, prefix string, params pgs.Parameters) ProxyVisitor {
@@ -67,13 +66,27 @@ func initProxyVisitor(d pgs.DebuggerCommon, w io.Writer, prefix string, params p
 		prefix:         prefix,
 		w:              w,
 		Parameters:     params,
-		Resolvers:      make(Resolvers),
+		Resolvers:      make(templates.RegisteredResolvers),
 		DebuggerCommon: d,
 	}
 
 	p.Visitor = pgs.PassThroughVisitor(&p)
 
 	return p
+}
+
+func postProcessProxyVisitor(v ProxyVisitor, params pgs.Parameters) error {
+	tpl, err := templates.Resolvers(v.Parameters, v.Resolvers)
+	if err != nil {
+		return err
+	}
+
+	err = tpl.Execute(v.w, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // VisitFile ...
@@ -163,7 +176,7 @@ func (p ProxyVisitor) visitMethod(m pgs.Method) (pgs.Visitor, error) {
 
 // VisitMessage ...
 func (p ProxyVisitor) VisitMessage(m pgs.Message) (pgs.Visitor, error) {
-	if err := p.findResolver(m); err != nil {
+	if err := p.registerResolver(m); err != nil {
 		return nil, err
 	}
 
@@ -180,13 +193,21 @@ func (p ProxyVisitor) VisitMessage(m pgs.Message) (pgs.Visitor, error) {
 	return p, err
 }
 
-func (p ProxyVisitor) findResolver(m pgs.Message) error {
-	var ext pb.Messages
-	if _, err := m.Extension(pb.E_Messages, &ext); err != nil {
-		return err
+func (p ProxyVisitor) registerResolver(m interface{}) error {
+	var resolver *pb.ResolverRule
+
+	switch ext := m.(type) {
+	case pgs.Message:
+		var mm pb.Messages
+		if _, err := ext.Extension(pb.E_Messages, &mm); err != nil {
+			return err
+		}
+
+		resolver = mm.GetResolver()
+	default:
 	}
 
-	if resolver := ext.GetResolver(); resolver != nil {
+	if resolver != nil {
 		p.Debugf("found resolver: %s", resolver.Name)
 		p.Resolvers[resolver.Name] = resolver
 	}

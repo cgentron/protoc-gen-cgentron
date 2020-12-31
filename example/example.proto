@@ -39,7 +39,7 @@ message Insert {
       qualifier: "$LATEST"
     };
 
-    Song Song = 1;
+    Song song = 1;
   }
   // Response ...
   message Response {
