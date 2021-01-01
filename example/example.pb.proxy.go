@@ -22,9 +22,12 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/health"
 	grpc_health_v1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 type srv struct {
@@ -280,14 +283,38 @@ var _ json.Unmarshaler = (*Insert_Response)(nil)
 // Here goes a message Insert
 func (s *service) Insert(ctx context.Context, req *Insert_Request) (*Insert_Response, error) {
 
-	// resolver
-	return nil, nil
+	opt := req.ProtoReflect().Descriptor().Options()
+	ext := proto.GetExtension(opt, pb.E_Messages).(*pb.Messages)
+	resolver := ext.GetResolver()
+
+	if resolver == nil {
+		return nil, status.Error(codes.InvalidArgument, "no resolver found")
+	}
+
+	config := map[string]interface{}{}
+
+	r, err := s.builder.Build(resolver.Name, config, resolver.Name)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	rr, err := r()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	var resp Insert_Response
+	if err := rr.Resolve(ctx, req, &resp); err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &resp, nil
 
 }
 
 var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
 
-	"github.com/cgentron/pluginamazn": &pb.ResolverRule{
+	"github.com/cgentron/pluginamazn": {
 		Name:    "github.com/cgentron/pluginamazn",
 		Url:     "https://github.com/cgentron/pluginamzn/archive/c567b5f7f347b4b6153fcc19700a59611b9bd4c9.zip",
 		Version: "",

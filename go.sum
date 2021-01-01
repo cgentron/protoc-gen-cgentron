@@ -33,6 +33,8 @@ github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghf
 github.com/cgentron/api v0.0.0-20201222090608-aaab56afe4c4/go.mod h1:JEHiHuXQaaXiIc4yPrY4q3YkVDifAnZPrUGJnhcggBo=
 github.com/cgentron/api v0.0.0-20201228151053-979e126b4ee2 h1:QqxrgViCzhHAaCvjVLbkjyTy4PvG/sLlzxHI0d9okFg=
 github.com/cgentron/api v0.0.0-20201228151053-979e126b4ee2/go.mod h1:JEHiHuXQaaXiIc4yPrY4q3YkVDifAnZPrUGJnhcggBo=
+github.com/cgentron/api v0.0.0-20201231131405-1db2174d26f6 h1:/aNofF92baTCy8PPwKwSgNoXhi7i/eM1OnVVbSr4a+s=
+github.com/cgentron/api v0.0.0-20201231131405-1db2174d26f6/go.mod h1:JEHiHuXQaaXiIc4yPrY4q3YkVDifAnZPrUGJnhcggBo=
 github.com/cgentron/pluginamzn v0.0.0-20201228151353-094fe61a71d0 h1:0HqSwzLZqLCzqTj/52cVjfrV5ZBe2Kp0bDTK5oA/O+M=
 github.com/cgentron/pluginamzn v0.0.0-20201228151353-094fe61a71d0/go.mod h1:SsJGgEr/w9i68Vn4mvvk/n2Ug5jmMe5Y0n5VRcn4xHE=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/andersnormal/pkg v0.0.0-20201130102301-87bbd463370c
-	github.com/cgentron/api v0.0.0-20201228151053-979e126b4ee2
+	github.com/cgentron/api v0.0.0-20201231131405-1db2174d26f6
 	github.com/cgentron/pluginamzn v0.0.0-20201228151353-094fe61a71d0
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0

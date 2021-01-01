@@ -1,7 +1,6 @@
 package templates
 
-const resolversTpl = `
-var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
+const resolversTpl = `var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
   {{ range $name, $resolver := resolvers }}
     "{{ $name }}": {
       Name: "{{ $resolver.Name }}",
