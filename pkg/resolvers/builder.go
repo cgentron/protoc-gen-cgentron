@@ -11,6 +11,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/traefik/yaegi/interp"
 	"github.com/traefik/yaegi/stdlib"
+	"github.com/traefik/yaegi/stdlib/unsafe"
 )
 
 // Descriptor The static part of a plugin configuration (prod).
@@ -61,6 +62,7 @@ func NewBuilder(client *Client, resolvers map[string]Descriptor) (*Builder, erro
 
 		i := interp.New(interp.Options{GoPath: client.GoPath()})
 		i.Use(stdlib.Symbols)
+		i.Use(unsafe.Symbols)
 		i.Use(iface.Symbols)
 
 		_, err = i.Eval(fmt.Sprintf(`import "%s"`, manifest.Import))

@@ -27,5 +27,6 @@ proto:
 
 .PHONY: example
 example:
-	go build -o bin/protoc-gen-cgentron main.go && protoc --go_out=plugins=grpc:. --go_opt=paths=source_relative --cgentron_out=. --plugin=bin/protoc-gen-aws-service-proxy -I ./ example/example.proto
+	go build -o bin/protoc-gen-cgentron main.go && protoc --go_out=plugins=grpc:. --go_opt=paths=source_relative --cgentron_out=. --plugin=bin/protoc-gen-cgentron -I ./ example/example.proto
+
 

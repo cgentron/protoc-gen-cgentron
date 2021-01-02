@@ -30,15 +30,6 @@ func proxyContext(m pgs.Method) (ProxyContext, error) {
 	ctx := ProxyContext{}
 	ctx.Method = m
 
-	in := m.Input()
-	var options pb.Messages
-	if _, err := in.Extension(pb.E_Messages, &options); err != nil {
-		return ctx, err
-	}
-
-	ctx.Typ = resolveMethods(&options, m)
-	ctx.Messages = &options
-
 	if ctx.Typ == "error" {
 		return ctx, fmt.Errorf("unknown template type")
 	}
