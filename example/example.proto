@@ -8,7 +8,12 @@ import "cgentron/amazon/annotations.proto";
 // Example ...
 service Example {
   // Insert ...
-  rpc Insert(Insert.Request) returns (Insert.Response) {};
+  rpc Insert(Insert.Request) returns (Insert.Response) {
+    option (cgentron.amazon.messages).lambda = {
+      function_name: "arn:aws:lambda:eu-west-1:291339088935:function:my-test",
+      qualifier: "$LATEST"
+    };
+  };
 }
 
 // Song ...
@@ -27,11 +32,6 @@ message Song {
 message Insert {
   // Request ...
   message Request {
-    option (cgentron.amazon.messages).lambda = {
-      function_name: "arn:aws:lambda:eu-west-1:291339088935:function:my-test",
-      qualifier: "$LATEST"
-    };
-
     Song song = 1;
   }
   // Response ...
