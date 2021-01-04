@@ -30,8 +30,8 @@ message Insert {
   // Request ...
   message Request {
     option (cgentron.api.messages).resolver = {
-      name: "github.com/cgentron/pluginamazn",
-      url: "https://github.com/cgentron/pluginamzn/archive/c567b5f7f347b4b6153fcc19700a59611b9bd4c9.zip"
+      name: "github.com/cgentron/pluginamzn",
+      url: "https://github.com/cgentron/pluginamzn/archive/2bd7703142b37ed89ab648c410307268b699add1.zip"
     };
 
     option (cgentron.amazon.messages).lambda = {
