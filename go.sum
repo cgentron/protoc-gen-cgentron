@@ -206,6 +206,10 @@ github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/traefik/yaegi v0.9.9-0.20201215172004-a83f4923093c h1:5cpwYoD3wbL7GuVIZuobki+eOqwrclaTh61eTAiH2/I=
 github.com/traefik/yaegi v0.9.9-0.20201215172004-a83f4923093c/go.mod h1:FAYnRlZyuVlEkvnkHq3bvJ1lW5be6XuwgLdkYgYG6Lk=
+github.com/traefik/yaegi v0.9.11-0.20210119183205-274eecdf1821 h1:hw+q7xYn+a76QvPNrOnYk7N1DnFXeRyr/XxV5FLqD3U=
+github.com/traefik/yaegi v0.9.11-0.20210119183205-274eecdf1821/go.mod h1:FAYnRlZyuVlEkvnkHq3bvJ1lW5be6XuwgLdkYgYG6Lk=
+github.com/traefik/yaegi v0.9.12-0.20210128144203-ff521ecb1a79 h1:xyzj7t9Lcmqn7d31mIA1bxXxDvqxdqHm4NxPwL198UM=
+github.com/traefik/yaegi v0.9.12-0.20210128144203-ff521ecb1a79/go.mod h1:FAYnRlZyuVlEkvnkHq3bvJ1lW5be6XuwgLdkYgYG6Lk=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.18.0 h1:IV0DdMlatq9QO1Cr6wGJPVW1sV1Q8HvZXAIcjorylyM=

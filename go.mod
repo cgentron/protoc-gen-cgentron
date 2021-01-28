@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.6.1
-	github.com/traefik/yaegi v0.9.9-0.20201215172004-a83f4923093c
+	github.com/traefik/yaegi v0.9.12-0.20210128144203-ff521ecb1a79
 	github.com/valyala/fasthttp v1.18.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.1.1-0.20191107180719-034126e5016b // indirect

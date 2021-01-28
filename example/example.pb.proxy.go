@@ -314,7 +314,7 @@ func (s *service) Insert(ctx context.Context, req *Insert_Request) (*Insert_Resp
 
 var resolver_rules_rawDesc = map[string]*pb.ResolverRule{
 
-	"github.com/cgentron/pluginamazn": {
+	"github.com/cgentron/pluginamzn": {
 		Name:    "github.com/cgentron/pluginamzn",
 		Url:     "https://github.com/cgentron/pluginamzn/archive/2bd7703142b37ed89ab648c410307268b699add1.zip",
 		Version: "",
